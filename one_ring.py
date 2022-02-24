@@ -96,15 +96,17 @@ class OneRingCommands(commands.Cog):
     def parse_text(self, text: str):
         text_array = text.split(' ')
         commands = {'favored': 0, 'weary': False, 'num_dice': 0}
+        print(text_array)
         for text in text_array:
-            if text == 'favored':
+            if text == 'favored' or text == 'f' or text == 'F':
                 commands['favored'] += 1
-            elif text == 'unfavored':
+            elif text == 'unfavored' or text == 'u' or text == 'U':
                 commands['favored'] -= 1
-            elif text == 'weary':
+            elif text == 'weary' or text == 'w' or text == 'W':
                 commands['weary'] = True
             elif text.isnumeric():
                 commands['num_dice'] += int(text)
+            print(commands)
         return commands
 
     @commands.command(name="roll")
@@ -113,7 +115,6 @@ class OneRingCommands(commands.Cog):
             Make a normal roll
         """
         parsed_commands = self.parse_text(text)
-        print(parsed_commands)
         if parsed_commands['weary']:
             skill_roll = self.get_weary_roll(parsed_commands['num_dice'])
         else:
