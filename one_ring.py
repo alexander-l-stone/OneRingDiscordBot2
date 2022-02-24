@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import Embed
 from random import randint
 
 class OneRingCommands(commands.Cog):
@@ -62,36 +63,36 @@ class OneRingCommands(commands.Cog):
         return original_roll
 
     def generate_player_text_box(self, skill_roll, feat_die):
-        print_string = 'Skill Dice: '
         total = 0
         num_sixes = 0
+        dice_string = ""
         for num in skill_roll:
             total += num
-            print_string = f"{print_string}{num} "
+            dice_string = f"{dice_string}{num} "
             if num == 6:
                 num_sixes += 1
         total += feat_die
-        print_string = f"{print_string}| Feat Die: {feat_die} |"
+        embed = Embed(title=f"Total: {total}", description=f"{dice_string} | {feat_die}", colour=0x0000FF)
         if feat_die == 12:
-            print_string = f"{print_string} Automatic Success |"
-        print_string = f"{print_string} Total: {total} | You rolled {num_sixes} 6's"
-        return print_string
+            embed.add_field(name='Automatic Success', value='You rolled a Gandalf Rune', inline=False)
+        embed.add_field(name='Number of Sixes', value=f"{num_sixes}", inline=False)
+        return embed
     
     def generate_gm_text_box(self, skill_roll, feat_die):
-        print_string = 'Skill Dice: '
         total = 0
         num_sixes = 0
+        dice_string = ""
         for num in skill_roll:
             total += num
-            print_string = f"{print_string}{num} "
+            dice_string = f"{dice_string}{num} "
             if num == 6:
                 num_sixes += 1
         total += feat_die
-        print_string = f"{print_string}| Feat Die: {feat_die} |"
+        embed = Embed(title=f"Total: {total}", description=f"{dice_string} | {feat_die}", colur=0xFF0000)
         if feat_die == 11:
-            print_string = f"{print_string} Automatic Success |"
-        print_string = f"{print_string} Total: {total} | You rolled {num_sixes} 6's"
-        return print_string
+            embed.add_field(name='Automatic Success', value='You rolled an Eye of Sauron', inline=False)
+        embed.add_field(name='Number of Sixes', value=f"{num_sixes}", inline=False)
+        return embed
 
     def parse_text(self, text: str):
         text_array = text.split(' ')
@@ -120,7 +121,7 @@ class OneRingCommands(commands.Cog):
         else:
             skill_roll = self.get_skill_roll(parsed_commands['num_dice'])
         feat_die = self.get_player_feat_roll(parsed_commands['favored'])
-        await ctx.send(self.generate_player_text_box(skill_roll, feat_die))
+        await ctx.send(embed=self.generate_player_text_box(skill_roll, feat_die))
     
     @commands.command(name="gmroll")
     async def gmroll(self, ctx: commands.Context, *, text: str):
@@ -133,7 +134,7 @@ class OneRingCommands(commands.Cog):
         else:
             skill_roll = self.get_skill_roll(parsed_commands['num_dice'])
         feat_die = self.get_gm_feat_roll(parsed_commands['favored'])
-        await ctx.send(self.generate_gm_text_box(skill_roll, feat_die))
+        await ctx.send(embed=self.generate_gm_text_box(skill_roll, feat_die))
 
 def setup(bot: commands.Bot):
     bot.add_cog(OneRingCommands(bot))
